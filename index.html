@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You ❤️</title>
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background: #fff0f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+/* 🌸 Falling petals */
+.petal {
+  position: fixed;
+  top: -10px;
+  font-size: 20px;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(110vh);
+  }
+}
+
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  text-align: center;
+  width: 320px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {opacity:0; transform: scale(0.9);}
+  to {opacity:1; transform: scale(1);}
+}
+
+img {
+  width: 120px;
+  border-radius: 15px;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.yes {
+  background: #ff6fa5;
+  color: white;
+}
+
+.no {
+  background: #d8b4f8;
+  color: white;
+  position: absolute;
+}
+
+.food-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.food-card {
+  background: #fff5f8;
+  padding: 8px;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.food-card:hover {
+  transform: scale(1.05);
+}
+
+.food-card img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- 🎵 MUSIC -->
+<audio autoplay loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mp3">
+</audio>
+
+<div class="card" id="mainCard">
+
+  <!-- 👉 PUT YOUR CRUSH IMAGE -->
+  <img src="YOUR_CRUSH_IMAGE.jpg">
+
+  <h2>🌸 Will you go on a date with me? 🌸</h2>
+
+  <div style="position:relative; height:60px;">
+    <button class="yes" onclick="yesClicked()">YES 💗</button>
+    <button class="no" id="noBtn">No 😭</button>
+  </div>
+
+</div>
+
+<script>
+// 🌸 petals generator
+for (let i = 0; i < 20; i++) {
+  let petal = document.createElement("div");
+  petal.className = "petal";
+  petal.innerHTML = "🌸";
+  petal.style.left = Math.random() * 100 + "vw";
+  petal.style.animationDuration = (3 + Math.random() * 5) + "s";
+  document.body.appendChild(petal);
+}
+
+// ❌ moving no button
+const noBtn = document.getElementById("noBtn");
+noBtn.addEventListener("mouseover", () => {
+  const x = Math.random() * 200 - 100;
+  const y = Math.random() * 100 - 50;
+  noBtn.style.transform = `translate(${x}px, ${y}px)`;
+});
+
+// ❤️ YES click
+function yesClicked() {
+  document.getElementById("mainCard").innerHTML = `
+    <h2>Select our date 📅</h2>
+    <input type="date" id="datePick"><br><br>
+    <button onclick="showFood()">Next ➡️</button>
+  `;
+}
+
+// 🍽️ FOOD
+let selectedFoods = [];
+
+function showFood() {
+  const date = document.getElementById("datePick").value;
+
+  if (!date) {
+    alert("Please select a date 😭");
+    return;
+  }
+
+  window.selectedDate = date;
+
+  document.getElementById("mainCard").innerHTML = `
+    <h2>Choose what we’ll eat 😋</h2>
+
+    <div class="food-grid">
+
+      <div class="food-card" onclick="toggleFood(this,'Jadoh')">
+        <img src="jadoh.jpg">
+        <p>Jadoh</p>
+      </div>
+
+      <div class="food-card" onclick="toggleFood(this,'Drumstick')">
+        <img src="drumstick.jpg">
+        <p>Drumstick</p>
+      </div>
+
+      <div class="food-card" onclick="toggleFood(this,'Dohsnam laitlyngkot')">
+        <img src="dohsnam.jpg">
+        <p>Dohsnam laitlyngkot</p>
+      </div>
+
+      <div class="food-card" onclick="toggleFood(this,'Doh snier lad-smit')">
+        <img src="dohsnier.jpg">
+        <p>Doh snier lad-smit</p>
+      </div>
+
+    </div>
+
+    <br>
+    <button onclick="finishDate()">Done ❤️</button>
+  `;
+}
+
+// toggle food
+function toggleFood(el, food) {
+  if (selectedFoods.includes(food)) {
+    selectedFoods = selectedFoods.filter(f => f !== food);
+    el.style.background = "#fff5f8";
+  } else {
+    selectedFoods.push(food);
+    el.style.background = "#ffccd5";
+  }
+}
+
+// 🎉 final screen
+function finishDate() {
+  if (selectedFoods.length === 0) {
+    alert("Pick at least one food 😏");
+    return;
+  }
+
+  const foodList = selectedFoods.join(", ");
+
+  document.getElementById("mainCard").innerHTML = `
+    <h2>YAYYY ❤️🥹</h2>
+    <p><b>Date:</b> ${window.selectedDate}</p>
+    <p><b>Food:</b> ${foodList}</p>
+
+    <button onclick="sendWhatsApp('${window.selectedDate}','${foodList}')">
+      Send me this 💬
+    </button>
+
+    <h3>See you soon 💖</h3>
+  `;
+}
+
+// 📲 WhatsApp
+function sendWhatsApp(date, food) {
+  const msg = encodeURIComponent(
+    "I said YES ❤️\\nDate: " + date + "\\nFood: " + food
+  );
+  window.open(`https://wa.me/?text=${msg}`, "_blank");
+}
+</script>
+
+</body>
+</html>
